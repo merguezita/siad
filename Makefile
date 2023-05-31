@@ -1,11 +1,6 @@
 # These variables get inserted into ./build/commit.go
 GIT_REVISION=$(shell git rev-parse --short HEAD)
 GIT_DIRTY=$(shell git diff-index --quiet HEAD -- || echo "✗-")
-ifeq ("$(GIT_DIRTY)", "✗-")
-	BUILD_TIME=$(shell date)
-else
-	BUILD_TIME=$(shell git show -s --format=%ci HEAD)
-endif
 
 ldflags= \
 -X "go.sia.tech/siad/build.BinaryName=siad" \
@@ -169,13 +164,6 @@ release-util:
 # clean removes all directories that get automatically created during
 # development.
 clean:
-ifneq ("$(OS)","Windows_NT")
-# Linux
-	rm -rf cover doc/whitepaper.aux doc/whitepaper.log doc/whitepaper.pdf fullcover release
-else
-# Windows
-	- DEL /F /Q cover doc\whitepaper.aux doc\whitepaper.log doc\whitepaper.pdf fullcover release
-endif
 
 test:
 	go test -short -tags='debug testing netgo' -timeout=5s $(pkgs) -run=$(run) -count=$(count)
